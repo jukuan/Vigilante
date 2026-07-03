@@ -8,6 +8,19 @@ import (
 	"time"
 )
 
+type ScriptRunner func(scriptPath, message string)
+
+func defaultRunner(scriptPath, message string) {
+	cmd := exec.Command("bash", scriptPath, message)
+	output, err := cmd.CombinedOutput()
+
+	if err != nil {
+		log.Printf("Script %s failed: %v (output: %s)", scriptPath, err, string(output))
+	} else {
+		log.Printf("Script %s executed successfully", scriptPath)
+	}
+}
+
 type MatchedLine struct {
 	RuleName string
 	FilePath string
@@ -22,6 +35,7 @@ type AlertWindow struct {
 	windowStart  time.Time
 	cooldown     time.Duration
 	actions      []string
+	runner       ScriptRunner
 	timer        *time.Timer
 	flushChan    chan struct{}
 }
@@ -29,12 +43,19 @@ type AlertWindow struct {
 type AlertManager struct {
 	mu      sync.Mutex
 	windows map[string]*AlertWindow
+	runner  ScriptRunner
 }
 
 func NewAlertManager() *AlertManager {
 	return &AlertManager{
 		windows: make(map[string]*AlertWindow),
+		runner:  defaultRunner,   // use real bash by default
 	}
+}
+
+// SetRunner overrides the script runner for all windows (used in tests).
+func (am *AlertManager) SetRunner(r ScriptRunner) {
+	am.runner = r
 }
 
 func (am *AlertManager) AddMatch(line MatchedLine, cooldown time.Duration, actions []string) {
@@ -45,6 +66,7 @@ func (am *AlertManager) AddMatch(line MatchedLine, cooldown time.Duration, actio
 			ruleName:    line.RuleName,
 			cooldown:    cooldown,
 			actions:     actions,
+			runner:      am.runner,
 			windowStart: time.Now(),
 			flushChan:   make(chan struct{}),
 		}
@@ -105,14 +127,7 @@ func (aw *AlertWindow) flush() {
 }
 
 func (aw *AlertWindow) executeScript(scriptPath string, message string) {
-	cmd := exec.Command("bash", scriptPath, message)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("[%s] Script %s failed: %v (output: %s)",
-			aw.ruleName, scriptPath, err, string(output))
-	} else {
-		log.Printf("[%s] Script %s executed successfully", aw.ruleName, scriptPath)
-	}
+	aw.runner(scriptPath, message)
 }
 
 func (am *AlertManager) FlushAll() {
