@@ -1,0 +1,125 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"os/exec"
+	"sync"
+	"time"
+)
+
+type MatchedLine struct {
+	RuleName string
+	FilePath string
+	Line     string
+}
+
+type AlertWindow struct {
+	mu           sync.Mutex
+	ruleName     string
+	count        int
+	firstLine    string
+	windowStart  time.Time
+	cooldown     time.Duration
+	actions      []string
+	timer        *time.Timer
+	flushChan    chan struct{}
+}
+
+type AlertManager struct {
+	mu      sync.Mutex
+	windows map[string]*AlertWindow
+}
+
+func NewAlertManager() *AlertManager {
+	return &AlertManager{
+		windows: make(map[string]*AlertWindow),
+	}
+}
+
+func (am *AlertManager) AddMatch(line MatchedLine, cooldown time.Duration, actions []string) {
+	am.mu.Lock()
+	window, exists := am.windows[line.RuleName]
+	if !exists {
+		window = &AlertWindow{
+			ruleName:    line.RuleName,
+			cooldown:    cooldown,
+			actions:     actions,
+			windowStart: time.Now(),
+			flushChan:   make(chan struct{}),
+		}
+		window.timer = time.AfterFunc(cooldown, func() {
+			window.flushChan <- struct{}{}
+		})
+		am.windows[line.RuleName] = window
+		go window.runFlusher()
+	}
+	am.mu.Unlock()
+
+	window.mu.Lock()
+	defer window.mu.Unlock()
+
+	window.count++
+	if window.count == 1 {
+		window.firstLine = TruncateTo16(line.Line)
+	}
+}
+
+func (aw *AlertWindow) runFlusher() {
+	for range aw.flushChan {
+		aw.flush()
+	}
+}
+
+func (aw *AlertWindow) flush() {
+	aw.mu.Lock()
+	count := aw.count
+	firstLine := aw.firstLine
+	windowStart := aw.windowStart
+	aw.mu.Unlock()
+
+	if count == 0 {
+		return
+	}
+
+	minutes := int(time.Since(windowStart).Minutes())
+	if minutes < 1 {
+		minutes = 1
+	}
+
+	message := fmt.Sprintf("ALERT: %d lines in logs for last %d minutes with like %s",
+		count, minutes, firstLine)
+
+	log.Printf("[%s] Flushing alert: %s", aw.ruleName, message)
+
+	for _, script := range aw.actions {
+		go aw.executeScript(script, message)
+	}
+
+	aw.mu.Lock()
+	aw.count = 0
+	aw.firstLine = ""
+	aw.windowStart = time.Now()
+	aw.timer.Reset(aw.cooldown)
+	aw.mu.Unlock()
+}
+
+func (aw *AlertWindow) executeScript(scriptPath string, message string) {
+	cmd := exec.Command("bash", scriptPath, message)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("[%s] Script %s failed: %v (output: %s)",
+			aw.ruleName, scriptPath, err, string(output))
+	} else {
+		log.Printf("[%s] Script %s executed successfully", aw.ruleName, scriptPath)
+	}
+}
+
+func (am *AlertManager) FlushAll() {
+	am.mu.Lock()
+	defer am.mu.Unlock()
+
+	for _, window := range am.windows {
+		window.flush()
+	}
+}

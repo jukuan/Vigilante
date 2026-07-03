@@ -1,0 +1,27 @@
+inactivity_seconds: 300
+state_file: state.json
+
+rules:
+  - name: critical-errors
+    log_dir: /var/log/myapp
+    file_glob: "*.log"
+    patterns:
+      - "FATAL"
+      - "CRITICAL"
+      - "panic"
+      - "connection refused"
+    actions:
+      - scripts/email.sh
+      - scripts/slack.sh
+    cooldown_seconds: 300
+
+  - name: warnings
+    log_dir: /var/log/myapp
+    file_glob: "*.log"
+    patterns:
+      - "WARN"
+      - "timeout"
+    actions:
+      - scripts/email.sh
+    cooldown_seconds: 600
+    
