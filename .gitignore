@@ -1,0 +1,35 @@
+# Binary output
+vigilate
+vigilate.exe
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Dependency directories
+vendor/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project-specific runtime files
+state.json
+vigilate.log
+vigilate.pid
+
+# Config overrides (keep example config tracked, ignore local changes)
+config.local.yaml
+config.override.yaml
