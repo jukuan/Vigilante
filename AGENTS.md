@@ -1,7 +1,7 @@
-# GoVigilate — Context for AI Agents
+# GoVigilante — Context for AI Agents
 
 ## Project Summary
-**vigilate** is a lightweight, Linux-first log monitoring and alerting daemon written in Go. It watches directories of log files (with glob patterns), scans new lines for regex patterns, and triggers external bash scripts when matching lines are found. Alerts are accumulated over a configurable cooldown window and then reported with a summary message.
+**vigilante** is a lightweight, Linux-first log monitoring and alerting daemon written in Go. It watches directories of log files (with glob patterns), scans new lines for regex patterns, and triggers external bash scripts when matching lines are found. Alerts are accumulated over a configurable cooldown window and then reported with a summary message.
 
 ## Key Design Decisions
 - **Directory watching with glob:** Monitors a directory for files matching a glob (e.g., `app-*.log`). New and rotated files are handled automatically.
@@ -26,7 +26,7 @@
 
 ## Project File Structure
 
-vigilate/
+vigilante/
 ├── main.go
 ├── config.go
 ├── config.yaml # main configuration (tracked in git)

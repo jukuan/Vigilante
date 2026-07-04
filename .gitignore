@@ -1,6 +1,6 @@
 # Binary output
-vigilate
-vigilate.exe
+vigilante
+vigilante.exe
 
 # Go build artifacts
 *.exe
@@ -27,8 +27,9 @@ Thumbs.db
 
 # Project-specific runtime files
 state.json
-vigilate.log
-vigilate.pid
+vigilante.log
+vigilante.pid
+*.log
 
 # Config overrides (keep example config tracked, ignore local changes)
 config.local.yaml

@@ -3,7 +3,7 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-echo "Building vigilate..."
-go build -o vigilate .
+echo "Building vigilante..."
+go build -o vigilante .
 
-echo "Build complete: $(pwd)/vigilate"
+echo "Build complete: $(pwd)/vigilante"

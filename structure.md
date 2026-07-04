@@ -1,4 +1,4 @@
-vigilate/
+vigilante/
 ├── main.go
 ├── config.go
 ├── config.yaml

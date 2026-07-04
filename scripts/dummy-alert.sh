@@ -2,7 +2,7 @@
 # Dummy alert script: writes the alert message to a local file
 
 MESSAGE="$1"
-LOGFILE="dummy-alert.log"
+LOGFILE="alerts.log"
 
 if [ -z "$MESSAGE" ]; then
     echo "Usage: $0 <message>" >&2

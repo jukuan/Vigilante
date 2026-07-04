@@ -3,7 +3,7 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-echo "Setting up vigilate development environment..."
+echo "Setting up vigilante development environment..."
 
 # Ensure Go is installed
 if ! command -v go &> /dev/null; then
@@ -25,7 +25,7 @@ chmod +x bin/*.sh scripts/*.sh 2>/dev/null || true
 
 # Build to verify everything compiles
 echo "Building to verify..."
-go build -o vigilate .
+go build -o vigilante .
 
 echo "Development setup complete."
 echo ""

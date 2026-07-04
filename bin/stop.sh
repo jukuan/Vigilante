@@ -3,7 +3,7 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-PID_FILE="vigilate.pid"
+PID_FILE="vigilante.pid"
 
 if [ ! -f "$PID_FILE" ]; then
     echo "No PID file found. Service may not be running."
@@ -18,20 +18,20 @@ if ! kill -0 $PID 2>/dev/null; then
     exit 1
 fi
 
-echo "Stopping vigilate (PID: $PID)..."
+echo "Stopping vigilante (PID: $PID)..."
 kill -TERM $PID
 
 # Wait for process to stop
 for i in {1..10}; do
     if ! kill -0 $PID 2>/dev/null; then
-        echo "vigilate stopped"
+        echo "vigilante stopped"
         rm -f "$PID_FILE"
         exit 0
     fi
     sleep 1
 done
 
-echo "vigilate did not stop gracefully, forcing..."
+echo "vigilante did not stop gracefully, forcing..."
 kill -KILL $PID 2>/dev/null || true
 rm -f "$PID_FILE"
-echo "vigilate forcefully stopped"
+echo "vigilante forcefully stopped"

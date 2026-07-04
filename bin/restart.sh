@@ -3,7 +3,7 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-echo "Restarting vigilate..."
+echo "Restarting vigilante..."
 ./bin/stop.sh
 sleep 2
 ./bin/start.sh "$@"

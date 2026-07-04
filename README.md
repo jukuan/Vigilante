@@ -1,7 +1,13 @@
-# Go Vigilate
+# Go Vigilante
 
 A lightweight, zero-dependency log monitoring and alerting daemon written in Go.  
 Watch directories of log files, match lines against regex patterns, and trigger external bash scripts — with built‑in accumulation to avoid alert storms.
+
+**Why "Vigilante"?**  
+
+A vigilante is someone who takes matters into their own hands when official systems fall short. That's exactly what this tool does. When your primary monitoring stack is too heavy, too slow, or simply not an option — Vigilante steps in. It watches your logs, spots trouble, and alerts you. No agents, no dashboards, no infrastructure. Just a small binary and a config file, doing the job that bigger tools couldn't.
+
+Think of it as your silent partner — always watching, never sleeping, and ready to act when the official channels can't.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -35,8 +41,8 @@ Watch directories of log files, match lines against regex patterns, and trigger 
 ### Installation
 
 ```bash
-git clone https://github.com/jukuan/vigilate.git
-cd vigilate
+git clone https://github.com/jukuan/vigilante.git
+cd vigilante
 ./bin/dev_setup.sh   # installs dependencies and makes scripts executable
 ./bin/build.sh       # compiles the binary
 ```
@@ -45,8 +51,8 @@ cd vigilate
 
 Create a log file to watch:
 ```bash
-mkdir -p /tmp/vigilate-demo
-echo "INFO: all good" > /tmp/vigilate-demo/app.log
+mkdir -p /tmp/vigilante-demo
+echo "INFO: all good" > /tmp/vigilante-demo/app.log
 ```
 
 Edit config.yaml (or copy and adjust):
@@ -57,7 +63,7 @@ Edit config.yaml (or copy and adjust):
 
     rules:
       - name: demo-errors
-        log_dir: /tmp/vigilate-demo
+        log_dir: /tmp/vigilante-demo
         file_glob: "*.log"
         patterns:
           - "ERROR"
@@ -76,7 +82,7 @@ Edit config.yaml (or copy and adjust):
 Append a matching line:
 ```bash
 
-echo "ERROR: something broke" >> /tmp/vigilate-demo/app.log
+echo "ERROR: something broke" >> /tmp/vigilante-demo/app.log
 
 Wait up to 30 seconds and check alerts.log:
 bash
@@ -157,4 +163,4 @@ Pull requests are welcome! Please open an issue first to discuss what you'd like
 
 MIT © 2026 @Jukuan
 
-Vigilate – watch your logs, stay notified, sleep peacefully.
+Vigilante – watch your logs, stay notified, sleep peacefully.

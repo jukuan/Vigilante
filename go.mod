@@ -1,4 +1,4 @@
-module vigilate
+module vigilante
 
 go 1.21
 

@@ -193,21 +193,21 @@ func (w *LogWatcher) readFile(path string) {
 }
 
 func (w *LogWatcher) processContent(path, content string) {
-	// Split by newline, discard incomplete last line
 	lines := strings.Split(content, "\n")
 	if len(lines) > 0 && !strings.HasSuffix(content, "\n") {
-		lines = lines[:len(lines)-1] // Discard incomplete line
+		lines = lines[:len(lines)-1]
 	}
 
 	for _, line := range lines {
 		if line == "" {
 			continue
 		}
-		if w.matcher.Match(line) {
+		result := w.matcher.Match(line)
+		if result.Matched {
 			w.lineChan <- MatchedLine{
 				RuleName: w.rule.Name,
 				FilePath: path,
-				Line:     line,
+				Line:     result.Sample, // now contains the matched portion
 			}
 		}
 	}

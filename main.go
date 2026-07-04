@@ -10,7 +10,7 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmsgprefix)
-	log.SetPrefix("[vigilate] ")
+	log.SetPrefix("[vigilante] ")
 
 	configPath := "config.yaml"
 	if len(os.Args) > 1 {

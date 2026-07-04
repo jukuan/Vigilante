@@ -6,59 +6,77 @@ import (
 
 func TestPatternMatcher_Match(t *testing.T) {
 	tests := []struct {
-		name     string
-		patterns []string
-		line     string
-		want     bool
+		name        string
+		patterns    []string
+		line        string
+		wantMatched bool
+		wantSample  string // expected sample substring
 	}{
 		{
-			name:     "exact match",
-			patterns: []string{"FATAL"},
-			line:     "FATAL: something broke",
-			want:     true,
+			name:        "exact match",
+			patterns:    []string{"FATAL"},
+			line:        "FATAL: something broke",
+			wantMatched: true,
+			wantSample:  "FATAL: something",
 		},
 		{
-			name:     "case insensitive",
-			patterns: []string{"error"},
-			line:     "ERROR: disk full",
-			want:     true,
+			name:        "case insensitive",
+			patterns:    []string{"error"},
+			line:        "ERROR: disk full",
+			wantMatched: true,
+			wantSample:  "ERROR: disk full",
 		},
 		{
-			name:     "regex special chars escaped",
-			patterns: []string{"[INFO]"},
-			line:     "this [INFO] message",
-			want:     true,
+			name:        "regex special chars escaped",
+			patterns:    []string{"[INFO]"},
+			line:        "this [INFO] message",
+			wantMatched: true,
+			wantSample:  "[INFO] message",
 		},
 		{
-			name:     "no match",
-			patterns: []string{"FATAL"},
-			line:     "DEBUG: all good",
-			want:     false,
+			name:        "no match",
+			patterns:    []string{"FATAL"},
+			line:        "DEBUG: all good",
+			wantMatched: false,
 		},
 		{
-			name:     "multiple patterns, OR logic",
-			patterns: []string{"FATAL", "ERROR"},
-			line:     "ERROR: something",
-			want:     true,
+			name:        "multiple patterns, OR logic",
+			patterns:    []string{"FATAL", "ERROR"},
+			line:        "ERROR: something",
+			wantMatched: true,
+			wantSample:  "ERROR: something",
 		},
 		{
-			name:     "pattern with regex (starts with)",
-			patterns: []string{"^start"},
-			line:     "start of line",
-			want:     true,
+			name:        "pattern with regex (starts with)",
+			patterns:    []string{"^start"},
+			line:        "start of line",
+			wantMatched: true,
+			wantSample:  "start of line",
 		},
 		{
-			name:     "pattern with regex (end with)",
-			patterns: []string{"end$"},
-			line:     "this is the end",
-			want:     true,
+			name:        "pattern with regex (end with)",
+			patterns:    []string{"end$"},
+			line:        "this is the end",
+			wantMatched: true,
+			wantSample:  "end",
+		},
+		{
+			name:        "short match gets context",
+			patterns:    []string{"FATAL"},
+			line:        "[2026-07-04] FATAL: disk failure imminent",
+			wantMatched: true,
+			wantSample:  "FATAL: disk fail",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			pm := NewPatternMatcher(tt.patterns)
-			if got := pm.Match(tt.line); got != tt.want {
-				t.Errorf("Match(%q) = %v, want %v", tt.line, got, tt.want)
+			result := pm.Match(tt.line)
+			if result.Matched != tt.wantMatched {
+				t.Errorf("Match(%q).Matched = %v, want %v", tt.line, result.Matched, tt.wantMatched)
+			}
+			if tt.wantMatched && result.Sample != tt.wantSample {
+				t.Errorf("Match(%q).Sample = %q, want %q", tt.line, result.Sample, tt.wantSample)
 			}
 		})
 	}
