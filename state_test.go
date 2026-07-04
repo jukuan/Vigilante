@@ -7,7 +7,11 @@ import (
 
 func TestStateManagerBasic(t *testing.T) {
 	tmpFile := "test_state.json"
-	defer os.Remove(tmpFile)
+	defer func() {
+		if err := os.Remove(tmpFile); err != nil {
+			t.Logf("failed to remove temp file: %v", err)
+		}
+	}()
 
 	sm, err := NewStateManager(tmpFile)
 	if err != nil {
@@ -30,7 +34,11 @@ func TestStateManagerBasic(t *testing.T) {
 	if err := sm.Save(); err != nil {
 		t.Fatalf("Save failed: %v", err)
 	}
-	sm2, _ := NewStateManager(tmpFile)
+
+	sm2, err := NewStateManager(tmpFile)
+	if err != nil {
+		t.Fatalf("NewStateManager reload failed: %v", err)
+	}
 	if off := sm2.GetOffset("/var/log/app.log"); off != 1024 {
 		t.Errorf("reloaded offset mismatch: %d", off)
 	}

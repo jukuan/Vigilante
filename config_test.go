@@ -6,7 +6,6 @@ import (
 )
 
 func TestLoadConfig(t *testing.T) {
-	// Valid minimal config
 	yamlContent := `
 inactivity_seconds: 600
 state_file: test_state.json
@@ -25,12 +24,18 @@ rules:
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove(tmpfile.Name())
+	defer func() {
+		if err := os.Remove(tmpfile.Name()); err != nil {
+			t.Logf("failed to remove temp file: %v", err)
+		}
+	}()
 
 	if _, err := tmpfile.Write([]byte(yamlContent)); err != nil {
 		t.Fatal(err)
 	}
-	tmpfile.Close()
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
 
 	cfg, err := LoadConfig(tmpfile.Name())
 	if err != nil {
@@ -47,7 +52,7 @@ rules:
 	if rule.CooldownSeconds != 120 {
 		t.Errorf("expected cooldown 120, got %d", rule.CooldownSeconds)
 	}
-	if rule.InactivitySeconds != 600 { // should inherit global
+	if rule.InactivitySeconds != 600 {
 		t.Errorf("expected inactivity 600, got %d", rule.InactivitySeconds)
 	}
 	if rule.LogDir != "/var/log" {
@@ -63,12 +68,24 @@ rules:
 
 func TestLoadConfigNoRules(t *testing.T) {
 	yamlContent := `inactivity_seconds: 100`
-	tmpfile, _ := os.CreateTemp("", "config-*.yaml")
-	defer os.Remove(tmpfile.Name())
-	tmpfile.Write([]byte(yamlContent))
-	tmpfile.Close()
+	tmpfile, err := os.CreateTemp("", "config-*.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		if err := os.Remove(tmpfile.Name()); err != nil {
+			t.Logf("failed to remove temp file: %v", err)
+		}
+	}()
 
-	_, err := LoadConfig(tmpfile.Name())
+	if _, err := tmpfile.Write([]byte(yamlContent)); err != nil {
+		t.Fatal(err)
+	}
+	if err := tmpfile.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = LoadConfig(tmpfile.Name())
 	if err == nil {
 		t.Fatal("expected error for missing rules")
 	}

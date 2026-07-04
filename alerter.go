@@ -28,16 +28,16 @@ type MatchedLine struct {
 }
 
 type AlertWindow struct {
-	mu           sync.Mutex
-	ruleName     string
-	count        int
-	firstLine    string
-	windowStart  time.Time
-	cooldown     time.Duration
-	actions      []string
-	runner       ScriptRunner
-	timer        *time.Timer
-	flushChan    chan struct{}
+	mu          sync.Mutex
+	ruleName    string
+	count       int
+	firstLine   string
+	windowStart time.Time
+	cooldown    time.Duration
+	actions     []string
+	runner      ScriptRunner
+	timer       *time.Timer
+	flushChan   chan struct{}
 }
 
 type AlertManager struct {
@@ -49,7 +49,7 @@ type AlertManager struct {
 func NewAlertManager() *AlertManager {
 	return &AlertManager{
 		windows: make(map[string]*AlertWindow),
-		runner:  defaultRunner,   // use real bash by default
+		runner:  defaultRunner, // use real bash by default
 	}
 }
 

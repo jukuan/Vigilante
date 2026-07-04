@@ -14,13 +14,13 @@ type Config struct {
 }
 
 type Rule struct {
-	Name             string   `yaml:"name"`
-	LogDir           string   `yaml:"log_dir"`
-	FileGlob         string   `yaml:"file_glob"`
-	Patterns         []string `yaml:"patterns"`
-	Actions          []string `yaml:"actions"`
-	CooldownSeconds  int      `yaml:"cooldown_seconds"`
-	InactivitySeconds int     `yaml:"inactivity_seconds,omitempty"` // per-rule override
+	Name              string   `yaml:"name"`
+	LogDir            string   `yaml:"log_dir"`
+	FileGlob          string   `yaml:"file_glob"`
+	Patterns          []string `yaml:"patterns"`
+	Actions           []string `yaml:"actions"`
+	CooldownSeconds   int      `yaml:"cooldown_seconds"`
+	InactivitySeconds int      `yaml:"inactivity_seconds,omitempty"` // per-rule override
 }
 
 func LoadConfig(path string) (*Config, error) {

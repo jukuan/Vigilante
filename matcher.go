@@ -9,8 +9,8 @@ type PatternMatcher struct {
 }
 
 type MatchResult struct {
-	Matched     bool
-	Sample      string
+	Matched bool
+	Sample  string
 }
 
 func NewPatternMatcher(patterns []string) *PatternMatcher {

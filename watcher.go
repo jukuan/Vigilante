@@ -13,11 +13,11 @@ import (
 )
 
 type LogWatcher struct {
-	rule          Rule
-	stateManager  *StateManager
-	matcher       *PatternMatcher
-	lineChan      chan<- MatchedLine
-	done          chan struct{}
+	rule         Rule
+	stateManager *StateManager
+	matcher      *PatternMatcher
+	lineChan     chan<- MatchedLine
+	done         chan struct{}
 }
 
 func NewLogWatcher(rule Rule, sm *StateManager, lineChan chan<- MatchedLine) *LogWatcher {
@@ -37,7 +37,7 @@ func (w *LogWatcher) Start() error {
 	}
 
 	if err := watcher.Add(w.rule.LogDir); err != nil {
-		watcher.Close()
+		_ = watcher.Close()
 		return fmt.Errorf("watching directory %s: %w", w.rule.LogDir, err)
 	}
 
@@ -54,7 +54,9 @@ func (w *LogWatcher) Stop() {
 }
 
 func (w *LogWatcher) watchLoop(watcher *fsnotify.Watcher) {
-	defer watcher.Close()
+	defer func() {
+		_ = watcher.Close()
+	}()
 
 	for {
 		select {
@@ -155,7 +157,9 @@ func (w *LogWatcher) readFile(path string) {
 		w.stateManager.RemoveFile(path)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	info, err := file.Stat()
 	if err != nil {

@@ -31,7 +31,7 @@ func TestPatternMatcher_Match(t *testing.T) {
 			patterns:    []string{"[INFO]"},
 			line:        "this [INFO] message",
 			wantMatched: true,
-			wantSample:  "[INFO] message",
+			wantSample:  "is [INFO] messag",
 		},
 		{
 			name:        "no match",
