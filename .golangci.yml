@@ -1,7 +1,4 @@
-version: "2"
-
 linters:
-  default: none
   enable:
     - errcheck
     - govet
@@ -9,8 +6,8 @@ linters:
     - staticcheck
     - unused
     - misspell
-
-formatters:
-  enable:
     - gofmt
     - goimports
+
+issues:
+  exclude-use-default: false
