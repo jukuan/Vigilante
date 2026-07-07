@@ -52,7 +52,7 @@ func TestAlertManager_AccumulateAndFlush(t *testing.T) {
 	}
 
 	// Message format: "ALERT: (n) lines in logs for last (m) minutes with like (s)"
-	expectedMsg := fmt.Sprintf("ALERT: 2 lines in logs for last 1 minutes with like %s", TruncateTo16("FATAL: disk full"))
+	expectedMsg := fmt.Sprintf("ALERT: 2 lines in logs for last 1 minutes with like %s", TruncateLogStr("FATAL: disk full"))
 	if msg != expectedMsg {
 		t.Errorf("expected message %q, got %q", expectedMsg, msg)
 	}
@@ -88,12 +88,12 @@ func TestAlertManager_CooldownResets(t *testing.T) {
 	}
 
 	// First flush message
-	expected1 := fmt.Sprintf("ALERT: 1 lines in logs for last 1 minutes with like %s", TruncateTo16("ERROR: A"))
+	expected1 := fmt.Sprintf("ALERT: 1 lines in logs for last 1 minutes with like %s", TruncateLogStr("ERROR: A"))
 	if calls[0].message != expected1 {
 		t.Errorf("first flush: expected %q, got %q", expected1, calls[0].message)
 	}
 	// Second flush message
-	expected2 := fmt.Sprintf("ALERT: 1 lines in logs for last 1 minutes with like %s", TruncateTo16("ERROR: B"))
+	expected2 := fmt.Sprintf("ALERT: 1 lines in logs for last 1 minutes with like %s", TruncateLogStr("ERROR: B"))
 	if calls[1].message != expected2 {
 		t.Errorf("second flush: expected %q, got %q", expected2, calls[1].message)
 	}

@@ -83,7 +83,7 @@ func (am *AlertManager) AddMatch(line MatchedLine, cooldown time.Duration, actio
 
 	window.count++
 	if window.count == 1 {
-		window.firstLine = TruncateTo16(line.Line)
+		window.firstLine = TruncateLogStr(line.Line)
 	}
 }
 

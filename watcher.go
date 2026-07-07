@@ -24,7 +24,7 @@ func NewLogWatcher(rule Rule, sm *StateManager, lineChan chan<- MatchedLine) *Lo
 	return &LogWatcher{
 		rule:         rule,
 		stateManager: sm,
-		matcher:      NewPatternMatcher(rule.Patterns),
+		matcher:      NewPatternMatcher(rule.Patterns, rule.SampleLength),
 		lineChan:     lineChan,
 		done:         make(chan struct{}),
 	}

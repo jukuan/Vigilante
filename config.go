@@ -21,6 +21,7 @@ type Rule struct {
 	Actions           []string `yaml:"actions"`
 	CooldownSeconds   int      `yaml:"cooldown_seconds"`
 	InactivitySeconds int      `yaml:"inactivity_seconds,omitempty"` // per-rule override
+	SampleLength      int      `yaml:"sample_length,omitempty"`      // chars to include in alert
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -43,6 +44,9 @@ func LoadConfig(path string) (*Config, error) {
 	}
 
 	for i, rule := range cfg.Rules {
+		if rule.SampleLength == 0 {
+			rule.SampleLength = 32 // default
+		}
 		if rule.Name == "" {
 			return nil, fmt.Errorf("rule %d has no name", i)
 		}

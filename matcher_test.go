@@ -70,7 +70,7 @@ func TestPatternMatcher_Match(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			pm := NewPatternMatcher(tt.patterns)
+			pm := NewPatternMatcher(tt.patterns, 16)
 			result := pm.Match(tt.line)
 			if result.Matched != tt.wantMatched {
 				t.Errorf("Match(%q).Matched = %v, want %v", tt.line, result.Matched, tt.wantMatched)
@@ -82,7 +82,7 @@ func TestPatternMatcher_Match(t *testing.T) {
 	}
 }
 
-func TestTruncateTo16(t *testing.T) {
+func TestTruncateLogStr(t *testing.T) {
 	tests := []struct {
 		input string
 		want  string
@@ -93,9 +93,9 @@ func TestTruncateTo16(t *testing.T) {
 		{"exactly 16 chars!!", "exactly 16 chars"},
 	}
 	for _, tt := range tests {
-		got := TruncateTo16(tt.input)
+		got := TruncateLogStr(tt.input, 16)
 		if got != tt.want {
-			t.Errorf("TruncateTo16(%q) = %q, want %q", tt.input, got, tt.want)
+			t.Errorf("TruncateLogStr(%q) = %q, want %q", tt.input, got, tt.want)
 		}
 	}
 }

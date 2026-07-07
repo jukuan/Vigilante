@@ -6,6 +6,7 @@ import (
 
 type PatternMatcher struct {
 	patterns []*regexp.Regexp
+	maxLen   int
 }
 
 type MatchResult struct {
@@ -13,9 +14,13 @@ type MatchResult struct {
 	Sample  string
 }
 
-func NewPatternMatcher(patterns []string) *PatternMatcher {
+func NewPatternMatcher(patterns []string, maxLen int) *PatternMatcher {
+	if maxLen == 0 {
+		maxLen = 16
+	}
 	pm := &PatternMatcher{
 		patterns: make([]*regexp.Regexp, 0, len(patterns)),
+		maxLen:   maxLen,
 	}
 
 	for _, p := range patterns {
@@ -49,16 +54,20 @@ func (pm *PatternMatcher) Match(line string) MatchResult {
 			}
 			return MatchResult{
 				Matched: true,
-				Sample:  TruncateTo16(sample),
+				Sample:  TruncateLogStr(sample, pm.maxLen),
 			}
 		}
 	}
 	return MatchResult{Matched: false}
 }
 
-func TruncateTo16(s string) string {
-	if len(s) > 16 {
-		return s[:16]
+func TruncateLogStr(s string, maxLen ...int) string {
+	limit := 16
+	if len(maxLen) > 0 && maxLen[0] > 0 {
+		limit = maxLen[0]
+	}
+	if len(s) > limit {
+		return s[:limit]
 	}
 	return s
 }
