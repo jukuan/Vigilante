@@ -105,13 +105,11 @@ func (aw *AlertWindow) flush() {
 		return
 	}
 
-	minutes := int(time.Since(windowStart).Minutes())
-	if minutes < 1 {
-		minutes = 1
-	}
+	minutes := max(int(time.Since(windowStart).Minutes()), 1)
 
-	message := fmt.Sprintf("ALERT: %d lines in logs for last %d minutes with like %s",
-		count, minutes, firstLine)
+	message := fmt.Sprintf(
+		"ALERT: [%s] %d lines in logs for last %d minutes with like %s",
+		aw.ruleName, count, minutes, firstLine)
 
 	log.Printf("[%s] Flushing alert: %s", aw.ruleName, message)
 

@@ -7,7 +7,7 @@
 - **Directory watching with glob:** Monitors a directory for files matching a glob (e.g., `app-*.log`). New and rotated files are handled automatically.
 - **No historical backfill:** On startup, only new content is processed; existing file content is skipped.
 - **Incomplete lines discarded:** The last incomplete line of a read is ignored (simpler than buffering across reads).
-- **Accumulate-then-flush alerting:** Within a cooldown window (per rule), matching lines are counted. At the end of the window, the alert script fires once with a message: `ALERT: (n) lines in logs for last (m) minutes with like (s)`, where `(s)` is the first 16 characters of the first matched line.
+- **Accumulate-then-flush alerting:** Within a cooldown window (per rule), matching lines are counted. At the end of the window, the alert script fires once with a message: `ALERT: (rule-name) (n) lines in logs for last (m) minutes with like (s)`, where `(s)` is the first 16 characters of the first matched line.
 - **State persistence:** Offsets into log files are saved in a JSON file (`state.json`) periodically and on shutdown, enabling resume after restart.
 - **No hot config reload:** Configuration is read at startup only; restart the daemon to pick up changes.
 - **Files that disappear are forgotten:** If a file is removed, the watcher drops it immediately without tracking.
