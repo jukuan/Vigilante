@@ -1,6 +1,7 @@
 version: "2"
 
 linters:
+  default: none
   enable:
     - errcheck
     - govet
@@ -13,5 +14,3 @@ formatters:
   enable:
     - gofmt
     - goimports
-issues:
-  exclude-use-default: false
