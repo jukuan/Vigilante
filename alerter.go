@@ -83,7 +83,7 @@ func (am *AlertManager) AddMatch(line MatchedLine, cooldown time.Duration, actio
 
 	window.count++
 	if window.count == 1 {
-		window.firstLine = TruncateLogStr(line.Line)
+		window.firstLine = line.Line
 	}
 }
 
@@ -101,6 +101,7 @@ func (aw *AlertWindow) flush() {
 	aw.mu.Unlock()
 
 	if count == 0 {
+		aw.timer.Reset(aw.cooldown)
 		return
 	}
 

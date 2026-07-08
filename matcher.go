@@ -45,8 +45,8 @@ func (pm *PatternMatcher) Match(line string) MatchResult {
 			matched := line[loc[0]:loc[1]]
 			// If very short, grab some context after it
 			sample := matched
-			if len(sample) < 16 && loc[1] < len(line) {
-				end := loc[1] + (16 - len(sample))
+			if len(sample) < pm.maxLen && loc[1] < len(line) {
+				end := loc[1] + (pm.maxLen - len(sample))
 				if end > len(line) {
 					end = len(line)
 				}

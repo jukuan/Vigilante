@@ -35,7 +35,7 @@ func main() {
 	alertManager := NewAlertManager()
 
 	// Channel for matched lines
-	lineChan := make(chan MatchedLine, 100)
+	lineChan := make(chan MatchedLine, 128)
 
 	// Start watchers for each rule
 	var watchers []*LogWatcher

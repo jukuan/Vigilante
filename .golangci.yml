@@ -1,3 +1,5 @@
+version: "2"
+
 linters:
   enable:
     - errcheck
@@ -6,8 +8,10 @@ linters:
     - staticcheck
     - unused
     - misspell
+
+formatters:
+  enable:
     - gofmt
     - goimports
-
 issues:
   exclude-use-default: false
